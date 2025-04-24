@@ -38,6 +38,7 @@ app.use(ErrorInterceptor)
 app.get('/health', (req, res) => {
   console.log('hitting....')
   res.send({ message: 'Working...' });
+
 });
 
 // ✅ Start server
