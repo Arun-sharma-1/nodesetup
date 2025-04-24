@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Define the expected email and username
+EXPECTED_EMAIL="78867795+Arun-sharma-1@users.noreply.github.co"
+EXPECTED_USERNAME="Arun Sharma"
+
+# Get the current git config values
+CURRENT_EMAIL=$(git config user.email)
+CURRENT_USERNAME=$(git config user.name)
+
+# Check email
+if [ "$CURRENT_EMAIL" != "$EXPECTED_EMAIL" ]; then
+  echo "❌ Commit rejected: Email must be $EXPECTED_EMAIL"
+  echo "   Your current email is: $CURRENT_EMAIL"
+  exit 1
+fi
+
+# Check username
+if [ "$CURRENT_USERNAME" != "$EXPECTED_USERNAME" ]; then
+  echo "❌ Commit rejected: Username must be $EXPECTED_USERNAME"
+  echo "   Your current username is: $CURRENT_USERNAME"
+  exit 1
+fi
+
+# If checks pass
+echo "✅ Email and username are correct. Proceeding with commit..."
+exit 0
