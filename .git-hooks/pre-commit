@@ -1,27 +1,41 @@
-#!/bin/bash
+#!/bin/bash 
 
-# Define the expected email and username
-EXPECTED_EMAIL="78867795+Arun-sharma-1@users.noreply.github.co"
-EXPECTED_USERNAME="Arun Sharma"
+# Define expected username and email
+EXPECTED_USERNAME="TontineSaaS"
+EXPECTED_EMAIL="developer@tontinesaas.com"
 
-# Get the current git config values
-CURRENT_EMAIL=$(git config user.email)
-CURRENT_USERNAME=$(git config user.name)
+# Function to check username and email
+check_username_and_email() {
+    local current_username=$(git config user.name)
+    local current_email=$(git config user.email)
+echo '🏗️ 👷 Checking git configurations... 👷‍♂️🏗️'
 
-# Check email
-if [ "$CURRENT_EMAIL" != "$EXPECTED_EMAIL" ]; then
-  echo "❌ Commit rejected: Email must be $EXPECTED_EMAIL"
-  echo "   Your current email is: $CURRENT_EMAIL"
-  exit 1
+    if [ "$current_username" != "$EXPECTED_USERNAME" ]; then
+        echo "❌❌❌ ERROR: Username mismatch. Expected: $EXPECTED_USERNAME, Actual: $current_username ❌❌❌"
+                echo '⚡️⚡️⚡️ PLEASE CHECK YOUR GIT CONFIG ⚡️⚡️⚡️'
+        exit 1
+    fi
+
+    if [ "$current_email" != "$EXPECTED_EMAIL" ]; then
+        echo "❌❌❌ ERROR: Email mismatch. Expected: $EXPECTED_EMAIL, Actual: $current_email ❌❌❌"
+                echo '⚡️⚡️⚡️ PLEASE CHECK YOUR GIT CONFIG ⚡️⚡️⚡️'
+        exit 1
+    fi
+}
+
+# Check username and email
+check_username_and_email
+
+echo '🏗️ 👷 Styling your project before committing 👷‍♂️🏗️'
+echo 'Please be patient, this may take a while...'
+pnpm lint-staged 
+
+if [ $? -ne 0 ]; then
+    echo '❌❌❌ Styling failed. Aborting commit.❌❌❌'
+    echo '⚡️⚡️⚡️ PLEASE CHECK ⚡️⚡️⚡️'
+    exit 1
 fi
 
-# Check username
-if [ "$CURRENT_USERNAME" != "$EXPECTED_USERNAME" ]; then
-  echo "❌ Commit rejected: Username must be $EXPECTED_USERNAME"
-  echo "   Your current username is: $CURRENT_USERNAME"
-  exit 1
-fi
+echo '✨🎉✨ No error found: Git Config looks Good, Committing your changes... ✨🚀🏄‍♂️🍻'
 
-# If checks pass
-echo "✅ Email and username are correct. Proceeding with commit..."
 exit 0
