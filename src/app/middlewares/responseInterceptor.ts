@@ -5,17 +5,17 @@ export const responseInterceptor = (req: Request, res: Response, next: NextFunct
 
     res.send = function (body) {
         let formattedResponse;
-
+        console.log('body type is  ', body, typeof body)
         if (res.statusCode >= 400) {
             formattedResponse = {
                 data: null,
-                error: typeof body === 'string' ? { message: body } : body,
+                error: body,
                 success: false
             }
 
         } else {
             formattedResponse = {
-                data: typeof body !== 'string' ? body : JSON.parse(body),
+                data: body,
                 error: null,
                 success: true
             }

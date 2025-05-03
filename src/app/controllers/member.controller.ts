@@ -1,6 +1,4 @@
-import { NextFunction, Request, Response } from "express";
-import { Member } from "../models/member.model";
-import { where } from "sequelize";
+import { Request, Response } from "express";
 import { User } from "../models/user.model";
 
 export const createMember: any = async (req: Request, res: Response) => {
@@ -24,6 +22,7 @@ export const getUsersOfMember: any = async (req: any, res: Response) => {
         })
         res.send(result)
     } catch (error) {
-
+        console.error('Error => ', error);
+        throw error;
     }
 }

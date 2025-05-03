@@ -23,6 +23,7 @@ const corsOptions = {
 }
 //middlewares
 app.use(cors(corsOptions))
+app.use(express.static(__dirname + '/src/public'))
 app.use(express.json())
 app.use(cookieParser())
 //response intercetor
@@ -31,13 +32,19 @@ app.use(responseInterceptor)
 //routing 
 app.use('/api/v1', publicRouter)
 app.use('/api/v1', authMiddleware, privateRouter)
+
+app.use('/api/v1', (req, res) => {
+  res.status(404).json({ error: 'Not Found' });
+});
+
 //error interceptor
 app.use(ErrorInterceptor)
 
 // ✅ Health check
 app.get('/health', (req, res) => {
   console.log('hitting....')
-  res.send({ message: 'Working...' });
+  res.sendFile(__dirname + '/index.html')
+  // res.send({ message: 'Working...' });
 
 });
 

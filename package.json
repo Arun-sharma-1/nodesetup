@@ -5,7 +5,11 @@
   "main": "src/index.ts",
   "type": "commonjs",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts,tsx --exec ts-node src/index.ts"
+    "dev": "nodemon --watch src --ext ts,tsx --exec ts-node src/index.ts",
+    "build": "node build",
+    "setup:git-hooks": "git config core.hooksPath .git-hooks",
+    "postinstall": "pnpm run setup:git-hooks",
+    "preinstall": "npx only-allow pnpm"
   },
   "keywords": [],
   "author": "",

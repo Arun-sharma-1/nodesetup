@@ -16,41 +16,64 @@ export const loginUser: any = async (req: Request, res: Response) => {
     //validation + token generate
     try {
         const body = req?.body;
-        console.log('body', body)
         //validation
         await loginSchema.validate(req.body, { abortEarly: false })
         const { email, password } = req.body;
         //reterive information
         const user = await User.findOne({ where: { email } });
+        console.log('user', user)
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password' })
         }
 
         //compare password
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log('isMatch', isMatch)
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid  password' });
         }
 
         //Generate token
-        const token = jwt.sign({ userId: user.id, email: user.email, role: 'admin' }, 'SECRET', { expiresIn: '1h' })
-
+        const token = jwt.sign({ userId: user.id, email: user.email, role: 'admin' }, 'SECRET', { expiresIn: '1m' })
+        console.log('token', token)
         res.cookie('token', token, {
             httpOnly: true,
             secure: false,
             sameSite: 'strict',
-            maxAge: 60 * 60 * 1000
+            maxAge: 1 * 60 * 1000
         })
         res.json('Login successful');
     } catch (error: any) {
         console.error('Error => ', error.errors[0])
-        res.json({ error: error.errors[0] })
+        throw error;
     }
 }
+export const login2fa: any = async (req: Request, res: Response) => {
+    try {
+        const { token } = req.cookies;
+        console.log('token', token)
+        if (!token) {
+            throw Error('Token Not found');
+        }
+        const decodedToken: any = jwt.verify(token, 'SECRET');
+        const { exp, iat, ...tokenPayload } = decodedToken;
+        console.log('decodedToken', decodedToken)
+        const updatedToken = jwt.sign({ ...tokenPayload, mode: 'light' }, 'SECRET', { expiresIn: '1h' })
 
+
+        res.cookie('Token2Fa', updatedToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict",
+            maxAge: 60 * 60 * 1000
+        }).send('Login Successfull')
+    } catch (error) {
+        console.error('Error =>  ', error);
+        throw error;
+    }
+}
 export const registerUser: any = async (req: Request, res: Response) => {
     //validation + hash + entry + token generate
-
     try {
         await registerSchema.validate(req?.body)
         const { password } = req.body;
@@ -59,12 +82,9 @@ export const registerUser: any = async (req: Request, res: Response) => {
         const user = await User.create(
             { ...req.body, password: hashedPassword }
         )
-
-        return res.status(200).json({ data: user })
-
+        res.send(user);
     } catch (error) {
         console.error('Error => ', error)
-        res.json({ error: error })
+        throw error;
     }
-
 }

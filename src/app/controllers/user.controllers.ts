@@ -12,7 +12,7 @@ export const getUserDetailById: any = async (req: any, res: Response) => {
             include: [
                 {
                     model: Member,
-                    as: 'memberInfo'
+                    as: 'memberInfo1'
                 }
             ]
         })
